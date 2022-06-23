@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+    <h1>Chat history of Dimitris</h1>
+    <pre id="messages" style="width: 90%; margin-left: 5%; height: 200px; overflow: scroll">
+        </pre>
+    <input type="text" id="messageBox" placeholder="Type your message here"
+        style="display: block; width: 90%; margin-bottom: 10px; margin-left: 5%; padding: 10px;" />
+    <button title="Send Message!" style="width: 90%; margin-left: 5%; height: 30px;" onclick="sendMessage()">
+        Send Message
+    </button>
+</body>
+
+<script>
+    const messages = document.querySelector('#messages');
+    const messageBox = document.querySelector('#messageBox');
+
+    function showMessage(message) {
+        messages.textContent += `\n${message}`;
+        messages.scrollTop = messages.scrollHeight;
+        messageBox.value = '';
+    }
+
+    // Create WebSocket connection.
+    const socket = new WebSocket('ws://localhost:3000');
+
+    // Connection opened
+    socket.addEventListener('open', function (event) {
+        console.log('Connected to WS Server')
+    });
+
+    // Listen for messages
+    socket.addEventListener('message', function (event) {
+        showMessage(`Motsios: ${event.data}`);
+    });
+
+    const sendMessage = () => {
+        socket.send(`${messageBox.value}`);
+        showMessage(`Me: ${messageBox.value}`);
+    }
+</script>
+</html>
